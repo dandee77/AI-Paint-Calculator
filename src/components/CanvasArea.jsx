@@ -31,8 +31,22 @@ const CanvasArea = forwardRef(function CanvasArea(
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctxRef.current = ctx;
-    clear();
-  }, [bucketColor]);
+    // Only fill background and redraw lines, do not clear drawnArray
+    ctx.fillStyle = bucketColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (drawnArray.length > 1) {
+      for (let i = 1; i < drawnArray.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(drawnArray[i - 1].x, drawnArray[i - 1].y);
+        ctx.lineWidth = drawnArray[i].size;
+        ctx.strokeStyle = drawnArray[i].eraser
+          ? bucketColor
+          : drawnArray[i].color;
+        ctx.lineTo(drawnArray[i].x, drawnArray[i].y);
+        ctx.stroke();
+      }
+    }
+  }, [bucketColor, drawnArray]);
 
   const getPos = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
