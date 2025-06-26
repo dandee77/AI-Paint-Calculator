@@ -1,7 +1,12 @@
+import { useState } from "react";
+import Marker from "./toolbar/Marker";
+
 function App() {
+  const [tool, setTool] = useState("brush");
+
   return (
     <>
-      <p className="text-red-500">Hello World</p>
+      <Marker tool={tool} onToolChange={setTool} />
     </>
   );
 }
