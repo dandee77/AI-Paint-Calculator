@@ -40,7 +40,7 @@ export default function TopBar({
 
   return (
     <div className="fixed top-0 w-full flex items-center px-4 py-2 gap-3 z-20 bg-gray-500/90 backdrop-blur shadow-lg border-b border-gray-400">
-      <span className="text-2xl font-bold font-[Oswald] tracking-wide text-white bg-gray-700 rounded-lg px-4 py-1 mr-2 shadow">
+      <span className="text-2xl font-mono font-bold font-[Oswald] tracking-wide text-white bg-gray-700 rounded-lg px-4 py-1 mr-2 shadow">
         {tool}
       </span>
 
@@ -55,13 +55,6 @@ export default function TopBar({
         ref={brushRef}
       >
         <ColorPickerPopover color={brushColor} onChange={setBrushColor} />
-        <input
-          type="text"
-          value={brushColor.replace("#", "").toUpperCase()}
-          readOnly
-          className="w-20 text-center font-mono font-bold rounded bg-purple-500 text-white border-none outline-none px-1 py-0.5 mx-1 cursor-default select-all"
-          style={{ letterSpacing: "1px" }}
-        />
         <input
           type="number"
           min="1"
@@ -80,16 +73,11 @@ export default function TopBar({
         />
       </div>
 
-      <button
-        onClick={() => setTool("Eraser")}
-        className="fas fa-eraser text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
-        title="Eraser"
-      />
-
       <div
-        className="flex items-center bg-gray-700 rounded px-2 py-1 shadow"
+        className="flex items-center bg-gray-700 rounded px-2 py-1 shadow gap-2"
         ref={bucketRef}
       >
+        <i className="fas fa-fill-drip text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"></i>
         <ColorPickerPopover
           color={bucketColor}
           onChange={(color) => {
@@ -97,14 +85,13 @@ export default function TopBar({
             setTool("Bucket Fill");
           }}
         />
-        <input
-          type="text"
-          value={bucketColor.replace("#", "").toUpperCase()}
-          readOnly
-          className="w-20 text-center font-mono font-bold rounded bg-white text-gray-900 border-none outline-none px-1 py-0.5 mx-1 cursor-default select-all"
-          style={{ letterSpacing: "1px" }}
-        />
       </div>
+
+      <button
+        onClick={() => setTool("Eraser")}
+        className="fas fa-eraser text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
+        title="Eraser"
+      />
 
       <button
         onClick={onClearCanvas}

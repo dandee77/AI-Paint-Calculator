@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  @apply bg-gray-400 overflow-hidden font-sans;
+  @apply bg-gray-400 overflow-hidden font-mono;
 }
 
 canvas {
