@@ -39,35 +39,57 @@ export default function TopBar({
   }, []);
 
   return (
-    <div className="fixed top-0 w-full bg-gray-700 text-white flex items-center px-4 py-2 gap-3 z-20">
-      <span className="text-xl font-semibold w-36">{tool}</span>
+    <div className="fixed top-0 w-full flex items-center px-4 py-2 gap-3 z-20 bg-gray-500/90 backdrop-blur shadow-lg border-b border-gray-400">
+      <span className="text-2xl font-bold font-[Oswald] tracking-wide text-white bg-gray-700 rounded-lg px-4 py-1 mr-2 shadow">
+        {tool}
+      </span>
 
       <button
         onClick={() => setTool("Brush")}
-        className="fas fa-brush text-white hover:text-yellow-300"
+        className="fas fa-brush text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Brush"
       />
 
-      <div className="flex items-center gap-2" ref={brushRef}>
+      <div
+        className="flex items-center gap-2 bg-gray-700 rounded px-2 py-1 shadow"
+        ref={brushRef}
+      >
         <ColorPickerPopover color={brushColor} onChange={setBrushColor} />
-        <span className="w-10 text-center">{brushSize}</span>
+        <input
+          type="text"
+          value={brushColor.replace("#", "").toUpperCase()}
+          readOnly
+          className="w-20 text-center font-mono font-bold rounded bg-purple-500 text-white border-none outline-none px-1 py-0.5 mx-1 cursor-default select-all"
+          style={{ letterSpacing: "1px" }}
+        />
+        <input
+          type="number"
+          min="1"
+          max="50"
+          value={brushSize}
+          onChange={(e) => setBrushSize(+e.target.value)}
+          className="w-12 text-center font-mono font-bold rounded bg-gray-200 text-gray-900 border-none outline-none px-1 py-0.5 mx-1"
+        />
         <input
           type="range"
           min="1"
           max="50"
           value={brushSize}
           onChange={(e) => setBrushSize(+e.target.value)}
-          className="w-24"
+          className="w-28 accent-gray-900"
         />
       </div>
 
       <button
         onClick={() => setTool("Eraser")}
-        className="fas fa-eraser text-white hover:text-yellow-300"
+        className="fas fa-eraser text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Eraser"
       />
 
-      <div className="flex items-center" ref={bucketRef}>
+      <div
+        className="flex items-center bg-gray-700 rounded px-2 py-1 shadow"
+        ref={bucketRef}
+      >
         <ColorPickerPopover
           color={bucketColor}
           onChange={(color) => {
@@ -75,31 +97,38 @@ export default function TopBar({
             setTool("Bucket Fill");
           }}
         />
+        <input
+          type="text"
+          value={bucketColor.replace("#", "").toUpperCase()}
+          readOnly
+          className="w-20 text-center font-mono font-bold rounded bg-white text-gray-900 border-none outline-none px-1 py-0.5 mx-1 cursor-default select-all"
+          style={{ letterSpacing: "1px" }}
+        />
       </div>
 
       <button
         onClick={onClearCanvas}
-        className="fas fa-undo-alt"
+        className="fas fa-undo-alt text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-yellow-200 hover:text-yellow-700 transition"
         title="Clear"
       />
       <button
         onClick={onSave}
-        className="fas fa-download"
+        className="fas fa-download text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-green-200 hover:text-green-700 transition"
         title="Save to LocalStorage"
       />
       <button
         onClick={onLoad}
-        className="fas fa-upload"
+        className="fas fa-upload text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-blue-200 hover:text-blue-700 transition"
         title="Load from LocalStorage"
       />
       <button
         onClick={onClearStorage}
-        className="fas fa-trash-alt"
+        className="fas fa-trash-alt text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-red-200 hover:text-red-700 transition"
         title="Clear Storage"
       />
       <button
         onClick={onDownload}
-        className="far fa-save"
+        className="far fa-save text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Download Image"
       />
     </div>
