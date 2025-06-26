@@ -1,5 +1,5 @@
-import { HexColorPicker } from "react-colorful";
 import { useState, useRef, useEffect } from "react";
+import ColorPickerPopover from "./ColorPickerPopover";
 
 export default function TopBar({
   tool,
@@ -49,22 +49,7 @@ export default function TopBar({
       />
 
       <div className="flex items-center gap-2" ref={brushRef}>
-        <button
-          className="w-8 h-8 rounded-full border-2 border-white shadow"
-          style={{ background: brushColor }}
-          onClick={() => setShowBrushPicker((v) => !v)}
-          title="Brush Color"
-        />
-        {showBrushPicker && (
-          <div className="absolute mt-12 z-30">
-            <HexColorPicker
-              color={brushColor}
-              onChange={(color) => {
-                setBrushColor(color);
-              }}
-            />
-          </div>
-        )}
+        <ColorPickerPopover color={brushColor} onChange={setBrushColor} />
         <span className="w-10 text-center">{brushSize}</span>
         <input
           type="range"
@@ -83,23 +68,13 @@ export default function TopBar({
       />
 
       <div className="flex items-center" ref={bucketRef}>
-        <button
-          className="w-8 h-8 rounded-full border-2 border-white shadow"
-          style={{ background: bucketColor }}
-          onClick={() => setShowBucketPicker((v) => !v)}
-          title="Bucket Fill Color"
+        <ColorPickerPopover
+          color={bucketColor}
+          onChange={(color) => {
+            setBucketColor(color);
+            setTool("Bucket Fill");
+          }}
         />
-        {showBucketPicker && (
-          <div className="absolute mt-12 z-30">
-            <HexColorPicker
-              color={bucketColor}
-              onChange={(color) => {
-                setBucketColor(color);
-                setTool("Bucket Fill");
-              }}
-            />
-          </div>
-        )}
       </div>
 
       <button
