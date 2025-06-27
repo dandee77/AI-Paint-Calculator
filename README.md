@@ -1,6 +1,6 @@
 # AI Paint Calculator
 
-A modern, responsive paint app that lets you draw math expressions or problems, and (in the future) will use Google Gemini AI to solve them! This project is built with React, Vite, and Tailwind CSS.
+This is a modern, responsive paint app where you can draw math problems and (soon) get instant answers using Google Gemini AI. Features include brush/eraser tools, undo/redo, color pickers, save/load, image download, and a mobile-friendly UI.
 
 ## Features
 
