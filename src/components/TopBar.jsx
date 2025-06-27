@@ -11,6 +11,8 @@ export default function TopBar({
   bucketColor,
   setBucketColor,
   onClearCanvas,
+  onUndo,
+  onRedo,
   onSave,
   onLoad,
   onClearStorage,
@@ -95,8 +97,20 @@ export default function TopBar({
 
         <button
           onClick={onClearCanvas}
-          className="fas fa-undo-alt text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-yellow-200 hover:text-yellow-700 transition"
-          title="Clear"
+          className="text-lg font-bold text-gray-900 bg-white rounded px-3 py-1 hover:bg-red-200 hover:text-red-700 transition"
+          title="Clear Canvas"
+        >
+          Clear
+        </button>
+        <button
+          onClick={onUndo}
+          className="fas fa-undo text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-blue-200 hover:text-blue-700 transition"
+          title="Undo"
+        />
+        <button
+          onClick={onRedo}
+          className="fas fa-redo text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-blue-200 hover:text-blue-700 transition"
+          title="Redo"
         />
         <button
           onClick={onSave}

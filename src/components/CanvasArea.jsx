@@ -13,8 +13,10 @@ const CanvasArea = forwardRef(function CanvasArea(
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
-  const [drawnArray, setDrawnArray] = useState([]);
+  const [drawnArray, setDrawnArray] = useState([]); // Array of strokes
   const [currentStroke, setCurrentStroke] = useState([]);
+  const [undoStack, setUndoStack] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
 
   useImperativeHandle(ref, () => ({
     clear,
@@ -22,6 +24,8 @@ const CanvasArea = forwardRef(function CanvasArea(
     load,
     clearStorage,
     download,
+    undo,
+    redo,
   }));
 
   useEffect(() => {
@@ -101,11 +105,33 @@ const CanvasArea = forwardRef(function CanvasArea(
 
   const stopDraw = () => {
     if (drawing && currentStroke.length > 0) {
-      // Save the completed stroke
-      setDrawnArray((prev) => [...prev, currentStroke]);
+      setDrawnArray((prev) => {
+        const newArray = [...prev, currentStroke];
+        setUndoStack([]);
+        setRedoStack([]);
+        return newArray;
+      });
       setCurrentStroke([]);
     }
     setDrawing(false);
+  };
+
+  const undo = () => {
+    setDrawnArray((prev) => {
+      if (prev.length === 0) return prev;
+      const newDrawn = prev.slice(0, -1);
+      setRedoStack((r) => [prev[prev.length - 1], ...r]);
+      return newDrawn;
+    });
+  };
+
+  const redo = () => {
+    setRedoStack((prev) => {
+      if (prev.length === 0) return prev;
+      const [first, ...rest] = prev;
+      setDrawnArray((d) => [...d, first]);
+      return rest;
+    });
   };
 
   const clear = () => {
@@ -146,7 +172,6 @@ const CanvasArea = forwardRef(function CanvasArea(
     const ctx = ctxRef.current;
     ctx.fillStyle = bucketColor;
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
     strokes.forEach((stroke) => {
       if (stroke.length > 0) {
         ctx.beginPath();

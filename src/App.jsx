@@ -10,6 +10,8 @@ export default function App() {
   const canvasRef = useRef();
 
   const handleClearCanvas = () => canvasRef.current?.clear();
+  const handleUndo = () => canvasRef.current?.undo();
+  const handleRedo = () => canvasRef.current?.redo();
   const handleSave = () => canvasRef.current?.save();
   const handleLoad = () => canvasRef.current?.load();
   const handleClearStorage = () => canvasRef.current?.clearStorage();
@@ -27,6 +29,8 @@ export default function App() {
         bucketColor={bucketColor}
         setBucketColor={setBucketColor}
         onClearCanvas={handleClearCanvas}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
         onSave={handleSave}
         onLoad={handleLoad}
         onClearStorage={handleClearStorage}
