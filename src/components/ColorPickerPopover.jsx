@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import reactCSS from "reactcss";
 import { SketchPicker } from "react-color";
 
@@ -6,6 +6,24 @@ import { SketchPicker } from "react-color";
 
 export default function ColorPickerPopover({ color, onChange }) {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
+  const popoverRef = useRef(null);
+  const swatchRef = useRef(null);
+
+  useEffect(() => {
+    if (!displayColorPicker) return;
+    function handleClick(e) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target) &&
+        swatchRef.current &&
+        !swatchRef.current.contains(e.target)
+      ) {
+        setDisplayColorPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [displayColorPicker]);
 
   const styles = reactCSS({
     default: {
@@ -30,32 +48,24 @@ export default function ColorPickerPopover({ color, onChange }) {
       },
       popover: {
         position: "absolute",
-        zIndex: "2",
-      },
-      cover: {
-        position: "fixed",
-        top: "0px",
-        right: "0px",
-        bottom: "0px",
-        left: "0px",
+        zIndex: 1000,
+        top: "40px",
+        left: 0,
       },
     },
   });
 
   return (
-    <div>
+    <div style={{ position: "relative", display: "inline-block" }}>
       <div
+        ref={swatchRef}
         style={styles.swatch}
         onClick={() => setDisplayColorPicker((v) => !v)}
       >
         <div style={styles.color} />
       </div>
       {displayColorPicker ? (
-        <div style={styles.popover}>
-          <div
-            style={styles.cover}
-            onClick={() => setDisplayColorPicker(false)}
-          />
+        <div ref={popoverRef} style={styles.popover}>
           <div style={{ color: "black" }}>
             <SketchPicker
               color={color}
