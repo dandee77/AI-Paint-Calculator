@@ -2,6 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import TopBar from "./components/TopBar";
 import CanvasArea from "./components/CanvasArea";
 
+// TODO: THE REDO DOES NOT BRING BACK THE CANVAS WHEN CLEARED NOT UNDOED
+// TODO: ADD INDICATOR FOR THE BG COLOR WHEEL
+// TODO: ADD BUCKET FILL TOOL FEATURE
+
 export default function App() {
   const [tool, setTool] = useState("Brush");
   const [brushColor, setBrushColor] = useState("#a51dab");
