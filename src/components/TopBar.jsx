@@ -23,7 +23,6 @@ export default function TopBar({
   const brushRef = useRef();
   const bucketRef = useRef();
 
-  // Close menu on outside click (mobile)
   useEffect(() => {
     if (!menuOpen) return;
     function handleClick(e) {
@@ -40,7 +39,6 @@ export default function TopBar({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
-  // Tools JSX for reuse
   const tools = (
     <>
       <button
@@ -129,16 +127,19 @@ export default function TopBar({
       </span>
       {/* Desktop tools */}
       <div className="flex-1 flex justify-end items-center gap-3">
-        <div className="hidden md:flex items-center gap-3">{tools}</div>
-        {/* Burger menu for mobile */}
-        <div className="md:hidden relative">
+        {/* Show tools inline for screens wider than 1000px (custom breakpoint) */}
+        <div className="hidden [@media(min-width:1000px)]:flex items-center gap-3">
+          {tools}
+        </div>
+        {/* Burger menu for screens less than 1000px or square screens */}
+        <div className="[@media(min-width:1000px)]:hidden relative">
           <button
             className="fas fa-bars text-3xl text-white px-2 py-1 rounded hover:bg-gray-700 transition"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label="Open menu"
           />
           {menuOpen && (
-            <div className="absolute right-0 mt-2 bg-gray-700 rounded shadow-lg flex flex-col gap-2 p-3 z-50">
+            <div className="absolute right-0 mt-2 bg-gray-700 rounded shadow-lg flex flex-col gap-2 p-3 z-50 min-w-[250px]">
               {tools}
             </div>
           )}
