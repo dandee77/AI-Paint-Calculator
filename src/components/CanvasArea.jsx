@@ -14,6 +14,7 @@ const CanvasArea = forwardRef(function CanvasArea(
   const ctxRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
   const [drawnArray, setDrawnArray] = useState([]);
+  const [currentStroke, setCurrentStroke] = useState([]);
 
   useImperativeHandle(ref, () => ({
     clear,
@@ -31,21 +32,22 @@ const CanvasArea = forwardRef(function CanvasArea(
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctxRef.current = ctx;
-    // Only fill background and redraw lines, do not clear drawnArray
+
     ctx.fillStyle = bucketColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    if (drawnArray.length > 1) {
-      for (let i = 1; i < drawnArray.length; i++) {
+    // Redraw all strokes
+    drawnArray.forEach((stroke) => {
+      if (stroke.length > 0) {
         ctx.beginPath();
-        ctx.moveTo(drawnArray[i - 1].x, drawnArray[i - 1].y);
-        ctx.lineWidth = drawnArray[i].size;
-        ctx.strokeStyle = drawnArray[i].eraser
-          ? bucketColor
-          : drawnArray[i].color;
-        ctx.lineTo(drawnArray[i].x, drawnArray[i].y);
+        ctx.moveTo(stroke[0].x, stroke[0].y);
+        ctx.lineWidth = stroke[0].size;
+        ctx.strokeStyle = stroke[0].eraser ? bucketColor : stroke[0].color;
+        for (let i = 1; i < stroke.length; i++) {
+          ctx.lineTo(stroke[i].x, stroke[i].y);
+        }
         ctx.stroke();
       }
-    }
+    });
   }, [bucketColor, drawnArray]);
 
   const getPos = (e) => {
@@ -64,6 +66,17 @@ const CanvasArea = forwardRef(function CanvasArea(
     ctx.moveTo(x, y);
     ctx.lineWidth = brushSize;
     ctx.strokeStyle = tool === "Eraser" ? bucketColor : brushColor;
+
+    // Start a new stroke
+    setCurrentStroke([
+      {
+        x,
+        y,
+        size: brushSize,
+        color: tool === "Eraser" ? bucketColor : brushColor,
+        eraser: tool === "Eraser",
+      },
+    ]);
   };
 
   const draw = (e) => {
@@ -72,7 +85,9 @@ const CanvasArea = forwardRef(function CanvasArea(
     const ctx = ctxRef.current;
     ctx.lineTo(x, y);
     ctx.stroke();
-    setDrawnArray((prev) => [
+
+    // Add point to current stroke
+    setCurrentStroke((prev) => [
       ...prev,
       {
         x,
@@ -84,7 +99,14 @@ const CanvasArea = forwardRef(function CanvasArea(
     ]);
   };
 
-  const stopDraw = () => setDrawing(false);
+  const stopDraw = () => {
+    if (drawing && currentStroke.length > 0) {
+      // Save the completed stroke
+      setDrawnArray((prev) => [...prev, currentStroke]);
+      setCurrentStroke([]);
+    }
+    setDrawing(false);
+  };
 
   const clear = () => {
     const canvas = canvasRef.current;
@@ -120,17 +142,23 @@ const CanvasArea = forwardRef(function CanvasArea(
     link.click();
   };
 
-  const restore = (lines) => {
+  const restore = (strokes) => {
     const ctx = ctxRef.current;
-    clear();
-    for (let i = 1; i < lines.length; i++) {
-      ctx.beginPath();
-      ctx.moveTo(lines[i - 1].x, lines[i - 1].y);
-      ctx.lineWidth = lines[i].size;
-      ctx.strokeStyle = lines[i].eraser ? bucketColor : lines[i].color;
-      ctx.lineTo(lines[i].x, lines[i].y);
-      ctx.stroke();
-    }
+    ctx.fillStyle = bucketColor;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    strokes.forEach((stroke) => {
+      if (stroke.length > 0) {
+        ctx.beginPath();
+        ctx.moveTo(stroke[0].x, stroke[0].y);
+        ctx.lineWidth = stroke[0].size;
+        ctx.strokeStyle = stroke[0].eraser ? bucketColor : stroke[0].color;
+        for (let i = 1; i < stroke.length; i++) {
+          ctx.lineTo(stroke[i].x, stroke[i].y);
+        }
+        ctx.stroke();
+      }
+    });
   };
 
   return (
