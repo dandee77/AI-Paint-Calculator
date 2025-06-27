@@ -7,15 +7,44 @@ export default function App() {
   const [brushColor, setBrushColor] = useState("#a51dab");
   const [brushSize, setBrushSize] = useState(10);
   const [bucketColor, setBucketColor] = useState("#ffffff");
+  const [status, setStatus] = useState("");
+  const statusTimeout = useRef();
   const canvasRef = useRef();
 
-  const handleClearCanvas = () => canvasRef.current?.clear();
-  const handleUndo = () => canvasRef.current?.undo();
-  const handleRedo = () => canvasRef.current?.redo();
-  const handleSave = () => canvasRef.current?.save();
-  const handleLoad = () => canvasRef.current?.load();
-  const handleClearStorage = () => canvasRef.current?.clearStorage();
-  const handleDownload = () => canvasRef.current?.download();
+  const showStatus = (msg) => {
+    setStatus(msg);
+    if (statusTimeout.current) clearTimeout(statusTimeout.current);
+    statusTimeout.current = setTimeout(() => setStatus(""), 800);
+  };
+
+  const handleClearCanvas = () => {
+    canvasRef.current?.clear();
+    showStatus("Cleared");
+  };
+  const handleUndo = () => {
+    canvasRef.current?.undo();
+    showStatus("Undo");
+  };
+  const handleRedo = () => {
+    canvasRef.current?.redo();
+    showStatus("Redo");
+  };
+  const handleSave = () => {
+    canvasRef.current?.save();
+    showStatus("Saved to local storage");
+  };
+  const handleLoad = () => {
+    canvasRef.current?.load();
+    showStatus("Loaded from local storage");
+  };
+  const handleClearStorage = () => {
+    canvasRef.current?.clearStorage();
+    showStatus("Cleared storage");
+  };
+  const handleDownload = () => {
+    canvasRef.current?.download();
+    showStatus("Downloaded");
+  };
 
   return (
     <main className="h-screen w-screen overflow-hidden">
@@ -35,6 +64,7 @@ export default function App() {
         onLoad={handleLoad}
         onClearStorage={handleClearStorage}
         onDownload={handleDownload}
+        status={status}
       />
       <CanvasArea
         ref={canvasRef}

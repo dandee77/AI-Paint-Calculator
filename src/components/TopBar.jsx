@@ -17,13 +17,13 @@ export default function TopBar({
   onLoad,
   onClearStorage,
   onDownload,
+  status,
 }) {
   const [showBrushPicker, setShowBrushPicker] = useState(false);
   const [showBucketPicker, setShowBucketPicker] = useState(false);
   const brushRef = useRef();
   const bucketRef = useRef();
 
-  // Hide color pickers when clicking outside
   useEffect(() => {
     function handleClick(e) {
       if (
@@ -42,8 +42,8 @@ export default function TopBar({
 
   return (
     <div className="fixed top-0 w-full flex items-center px-4 py-2 gap-3 z-20 bg-gray-500/90 backdrop-blur shadow-lg border-b border-gray-400">
-      <span className="text-2xl font-mono font-bold font-[Oswald] tracking-wide text-white bg-gray-700 rounded-lg px-4 py-1 mr-2 shadow">
-        {tool}
+      <span className="text-2xl font-mono font-bold font-[Oswald] tracking-wide text-white bg-gray-700 rounded-lg px-4 py-1 mr-2 shadow min-w-[120px] text-center">
+        {status ? status : tool === "Eraser" ? "Eraser" : "Brush"}
       </span>
       <div className="flex-1 flex justify-end items-center gap-3">
         <button
@@ -79,14 +79,7 @@ export default function TopBar({
           className="flex items-center bg-gray-700 rounded px-2 py-1 shadow gap-2"
           ref={bucketRef}
         >
-          <i className="fas fa-fill-drip text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"></i>
-          <ColorPickerPopover
-            color={bucketColor}
-            onChange={(color) => {
-              setBucketColor(color);
-              setTool("Bucket Fill");
-            }}
-          />
+          <ColorPickerPopover color={bucketColor} onChange={setBucketColor} />
         </div>
 
         <button

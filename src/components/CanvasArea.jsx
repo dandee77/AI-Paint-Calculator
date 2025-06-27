@@ -13,7 +13,7 @@ const CanvasArea = forwardRef(function CanvasArea(
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
-  const [drawnArray, setDrawnArray] = useState([]); // Array of strokes
+  const [drawnArray, setDrawnArray] = useState([]);
   const [currentStroke, setCurrentStroke] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
@@ -39,7 +39,7 @@ const CanvasArea = forwardRef(function CanvasArea(
 
     ctx.fillStyle = bucketColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // Redraw all strokes
+
     drawnArray.forEach((stroke) => {
       if (stroke.length > 0) {
         ctx.beginPath();
@@ -71,7 +71,6 @@ const CanvasArea = forwardRef(function CanvasArea(
     ctx.lineWidth = brushSize;
     ctx.strokeStyle = tool === "Eraser" ? bucketColor : brushColor;
 
-    // Start a new stroke
     setCurrentStroke([
       {
         x,
@@ -90,7 +89,6 @@ const CanvasArea = forwardRef(function CanvasArea(
     ctx.lineTo(x, y);
     ctx.stroke();
 
-    // Add point to current stroke
     setCurrentStroke((prev) => [
       ...prev,
       {
