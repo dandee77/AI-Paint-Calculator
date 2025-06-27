@@ -22,16 +22,13 @@ export default function TopBar({
   const [menuOpen, setMenuOpen] = useState(false);
   const brushRef = useRef();
   const bucketRef = useRef();
+  const menuRef = useRef();
 
   useEffect(() => {
     if (!menuOpen) return;
     function handleClick(e) {
-      if (
-        brushRef.current &&
-        !brushRef.current.contains(e.target) &&
-        bucketRef.current &&
-        !bucketRef.current.contains(e.target)
-      ) {
+      // Only close if click is outside the menu (and not on color pickers)
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
         setMenuOpen(false);
       }
     }
@@ -39,12 +36,16 @@ export default function TopBar({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
-  const tools = (
+  const tools = (closeMenu) => (
     <>
       <button
-        onClick={() => setTool("Brush")}
+        onClick={(e) => {
+          setTool("Brush");
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-brush text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Brush"
+        type="button"
       />
       <div
         className="flex items-center gap-2 bg-gray-700 rounded px-2 py-1 shadow"
@@ -75,46 +76,78 @@ export default function TopBar({
         <ColorPickerPopover color={bucketColor} onChange={setBucketColor} />
       </div>
       <button
-        onClick={() => setTool("Eraser")}
+        onClick={(e) => {
+          setTool("Eraser");
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-eraser text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Eraser"
+        type="button"
       />
       <button
-        onClick={onClearCanvas}
+        onClick={(e) => {
+          onClearCanvas();
+          if (closeMenu) closeMenu();
+        }}
         className="text-lg font-bold text-gray-900 bg-white rounded px-3 py-1 hover:bg-red-200 hover:text-red-700 transition"
         title="Clear Canvas"
+        type="button"
       >
         Clear
       </button>
       <button
-        onClick={onUndo}
+        onClick={(e) => {
+          onUndo();
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-undo text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-blue-200 hover:text-blue-700 transition"
         title="Undo"
+        type="button"
       />
       <button
-        onClick={onRedo}
+        onClick={(e) => {
+          onRedo();
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-redo text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-blue-200 hover:text-blue-700 transition"
         title="Redo"
+        type="button"
       />
       <button
-        onClick={onSave}
+        onClick={(e) => {
+          onSave();
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-download text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-green-200 hover:text-green-700 transition"
         title="Save to LocalStorage"
+        type="button"
       />
       <button
-        onClick={onLoad}
+        onClick={(e) => {
+          onLoad();
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-upload text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-blue-200 hover:text-blue-700 transition"
         title="Load from LocalStorage"
+        type="button"
       />
       <button
-        onClick={onClearStorage}
+        onClick={(e) => {
+          onClearStorage();
+          if (closeMenu) closeMenu();
+        }}
         className="fas fa-trash-alt text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-red-200 hover:text-red-700 transition"
         title="Clear Storage"
+        type="button"
       />
       <button
-        onClick={onDownload}
+        onClick={(e) => {
+          onDownload();
+          if (closeMenu) closeMenu();
+        }}
         className="far fa-save text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Download Image"
+        type="button"
       />
     </>
   );
@@ -129,7 +162,7 @@ export default function TopBar({
       <div className="flex-1 flex justify-end items-center gap-3">
         {/* Show tools inline for screens wider than 1000px (custom breakpoint) */}
         <div className="hidden [@media(min-width:1000px)]:flex items-center gap-3">
-          {tools}
+          {tools()}
         </div>
         {/* Burger menu for screens less than 1000px or square screens */}
         <div className="[@media(min-width:1000px)]:hidden relative">
@@ -137,10 +170,14 @@ export default function TopBar({
             className="fas fa-bars text-3xl text-white px-2 py-1 rounded hover:bg-gray-700 transition"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label="Open menu"
+            type="button"
           />
           {menuOpen && (
-            <div className="absolute right-0 mt-2 bg-gray-700 rounded shadow-lg flex flex-col gap-2 p-3 z-50 min-w-[250px]">
-              {tools}
+            <div
+              className="absolute right-0 mt-2 bg-gray-700 rounded shadow-lg flex flex-col gap-2 p-3 z-50 min-w-[250px]"
+              ref={menuRef}
+            >
+              {tools(() => setMenuOpen(false))}
             </div>
           )}
         </div>

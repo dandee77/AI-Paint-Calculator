@@ -28,30 +28,36 @@ const CanvasArea = forwardRef(function CanvasArea(
     redo,
   }));
 
+  // Responsive canvas: resize and redraw on window resize
   useEffect(() => {
-    const canvas = canvasRef.current;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - 50;
-    const ctx = canvas.getContext("2d");
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctxRef.current = ctx;
+    function resizeAndRedraw() {
+      const canvas = canvasRef.current;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight - 50;
+      const ctx = canvas.getContext("2d");
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctxRef.current = ctx;
 
-    ctx.fillStyle = bucketColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = bucketColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawnArray.forEach((stroke) => {
-      if (stroke.length > 0) {
-        ctx.beginPath();
-        ctx.moveTo(stroke[0].x, stroke[0].y);
-        ctx.lineWidth = stroke[0].size;
-        ctx.strokeStyle = stroke[0].eraser ? bucketColor : stroke[0].color;
-        for (let i = 1; i < stroke.length; i++) {
-          ctx.lineTo(stroke[i].x, stroke[i].y);
+      drawnArray.forEach((stroke) => {
+        if (stroke.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(stroke[0].x, stroke[0].y);
+          ctx.lineWidth = stroke[0].size;
+          ctx.strokeStyle = stroke[0].eraser ? bucketColor : stroke[0].color;
+          for (let i = 1; i < stroke.length; i++) {
+            ctx.lineTo(stroke[i].x, stroke[i].y);
+          }
+          ctx.stroke();
         }
-        ctx.stroke();
-      }
-    });
+      });
+    }
+    resizeAndRedraw();
+    window.addEventListener("resize", resizeAndRedraw);
+    return () => window.removeEventListener("resize", resizeAndRedraw);
   }, [bucketColor, drawnArray]);
 
   const getPos = (e) => {
