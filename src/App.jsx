@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import TopBar from "./components/TopBar";
 import CanvasArea from "./components/CanvasArea";
+import Loading from "./components/Loading";
+import Modal from "./components/Modal";
 
 // TODO: THE REDO DOES NOT BRING BACK THE CANVAS WHEN CLEARED NOT UNDOED
 // TODO: ADD INDICATOR FOR THE BG COLOR WHEEL
@@ -15,6 +17,9 @@ export default function App() {
   const [status, setStatus] = useState("");
   const statusTimeout = useRef();
   const canvasRef = useRef();
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
 
   // --- AI SEND BUTTON LOGIC ---
   const handleSendToAI = () => {
@@ -25,6 +30,7 @@ export default function App() {
       return;
     const realCanvas = canvasRef.current.getCanvasElement();
     if (!realCanvas || typeof realCanvas.toBlob !== "function") return;
+    setIsLoading(true);
     realCanvas.toBlob(async (blob) => {
       const formData = new FormData();
       formData.append("file", blob, "canvas.png");
@@ -35,9 +41,13 @@ export default function App() {
           body: formData,
         });
         const data = await res.json();
-        console.log("AI API result:", data);
+        setAiResult(data.result || data.error || "No result");
+        setModalOpen(true);
       } catch (err) {
-        console.error("AI API error:", err);
+        setAiResult("AI API error: " + err.message);
+        setModalOpen(true);
+      } finally {
+        setIsLoading(false);
       }
     }, "image/png");
   };
@@ -97,6 +107,16 @@ export default function App() {
         onDownload={handleDownload}
         status={status}
         onSendToAI={handleSendToAI}
+      />
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black opacity-75">
+          <Loading />
+        </div>
+      )}
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        result={aiResult}
       />
       <CanvasArea
         ref={canvasRef}

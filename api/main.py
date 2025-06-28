@@ -12,6 +12,8 @@ import uvicorn
 
 load_dotenv()
 
+#TODO: ADD A SOLUTION VALUE
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise RuntimeError("GEMINI_API_KEY not found in environment variables")
