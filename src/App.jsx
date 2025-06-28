@@ -16,6 +16,41 @@ export default function App() {
   const statusTimeout = useRef();
   const canvasRef = useRef();
 
+  // --- AI SEND BUTTON LOGIC ---
+  const handleSendToAI = () => {
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return;
+    // Try to get the real canvas element (if using forwardRef)
+    let realCanvas = canvasEl;
+    if (
+      canvasEl instanceof Object &&
+      canvasEl instanceof HTMLCanvasElement === false &&
+      canvasEl.canvas
+    ) {
+      realCanvas = canvasEl.canvas;
+    }
+    if (!realCanvas || typeof realCanvas.toBlob !== "function") {
+      // Try fallback
+      if (canvasEl.toBlob) realCanvas = canvasEl;
+      else return;
+    }
+    realCanvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append("file", blob, "canvas.png");
+      formData.append("dict_of_vars", JSON.stringify({}));
+      try {
+        const res = await fetch("http://localhost:8000/solve", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        console.log("AI API result:", data);
+      } catch (err) {
+        console.error("AI API error:", err);
+      }
+    }, "image/png");
+  };
+
   const showStatus = (msg) => {
     setStatus(msg);
     if (statusTimeout.current) clearTimeout(statusTimeout.current);
@@ -70,6 +105,7 @@ export default function App() {
         onClearStorage={handleClearStorage}
         onDownload={handleDownload}
         status={status}
+        onSendToAI={handleSendToAI}
       />
       <CanvasArea
         ref={canvasRef}

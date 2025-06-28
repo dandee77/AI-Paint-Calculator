@@ -18,6 +18,7 @@ export default function TopBar({
   onClearStorage,
   onDownload,
   status,
+  onSendToAI,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const brushRef = useRef();
@@ -120,6 +121,12 @@ export default function TopBar({
         onClick={onDownload}
         className="far fa-save text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
         title="Download Image"
+        type="button"
+      />
+      <button
+        onClick={onSendToAI}
+        className="fas fa-paper-plane text-2xl text-gray-900 bg-white rounded px-2 py-1 hover:bg-purple-200 hover:text-purple-700 transition"
+        title="Send to AI"
         type="button"
       />
     </>
