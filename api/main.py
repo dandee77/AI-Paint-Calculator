@@ -6,6 +6,7 @@ import io
 import json
 import google.generativeai as genai
 import ast
+import re
 from dotenv import load_dotenv
 import os
 import uvicorn
@@ -30,6 +31,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def clean_response(text):
+    # Remove backticks, smart quotes, and strip whitespace
+    text = text.replace('`', '').replace('“', '"').replace('”', '"').replace('’', "'").strip()
+    # Remove markdown artifacts
+    text = re.sub(r'^\s*```[a-zA-Z]*', '', text, flags=re.MULTILINE)
+    text = re.sub(r'```\s*$', '', text, flags=re.MULTILINE)
+    # Remove trailing periods after numbers (e.g., 31.)
+    text = re.sub(r'(?<=\d)\.(?=[^\d]|$)', '.0', text)
+    # Fix unquoted units in 'result' fields (e.g., 'result': -28.1 m/s -> 'result': '-28.1 m/s')
+    text = re.sub(
+        r"('result'\s*:\s*)(-?\d+(?:\.\d+)?\s*[a-zA-Z/°^²³μΩ]+)",
+        lambda m: f"{m.group(1)}'{m.group(2).strip()}'",
+        text
+    )
+    return text
+
 def analyze_image(img: Image.Image):
     model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     prompt = (
@@ -53,9 +70,11 @@ def analyze_image(img: Image.Image):
     print(response.text)
     answers = []
     try:
-        answers = ast.literal_eval(response.text)
+        cleaned = clean_response(response.text)
+        answers = ast.literal_eval(cleaned)
     except Exception as e:
         print(f"Error in parsing response from Gemini API: {e}")
+        print(f"Raw response: {response.text}")
     print('returned answer ', answers)
     for answer in answers:
         answer['assign'] = answer.get('assign', False)
