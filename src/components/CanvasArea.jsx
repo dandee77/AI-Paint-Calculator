@@ -26,9 +26,9 @@ const CanvasArea = forwardRef(function CanvasArea(
     download,
     undo,
     redo,
+    getCanvasElement: () => canvasRef.current,
   }));
 
-  // Responsive canvas: resize and redraw on window resize
   useEffect(() => {
     function resizeAndRedraw() {
       const canvas = canvasRef.current;

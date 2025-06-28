@@ -28,7 +28,6 @@ export default function TopBar({
   useEffect(() => {
     if (!menuOpen) return;
     function handleClick(e) {
-      // Only close if click is outside the menu (and not on color pickers)
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setMenuOpen(false);
       }

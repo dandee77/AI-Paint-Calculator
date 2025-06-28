@@ -18,22 +18,13 @@ export default function App() {
 
   // --- AI SEND BUTTON LOGIC ---
   const handleSendToAI = () => {
-    const canvasEl = canvasRef.current;
-    if (!canvasEl) return;
-    // Try to get the real canvas element (if using forwardRef)
-    let realCanvas = canvasEl;
     if (
-      canvasEl instanceof Object &&
-      canvasEl instanceof HTMLCanvasElement === false &&
-      canvasEl.canvas
-    ) {
-      realCanvas = canvasEl.canvas;
-    }
-    if (!realCanvas || typeof realCanvas.toBlob !== "function") {
-      // Try fallback
-      if (canvasEl.toBlob) realCanvas = canvasEl;
-      else return;
-    }
+      !canvasRef.current ||
+      typeof canvasRef.current.getCanvasElement !== "function"
+    )
+      return;
+    const realCanvas = canvasRef.current.getCanvasElement();
+    if (!realCanvas || typeof realCanvas.toBlob !== "function") return;
     realCanvas.toBlob(async (blob) => {
       const formData = new FormData();
       formData.append("file", blob, "canvas.png");
