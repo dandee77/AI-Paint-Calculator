@@ -5,6 +5,7 @@ import CanvasArea from "./components/CanvasArea";
 // TODO: THE REDO DOES NOT BRING BACK THE CANVAS WHEN CLEARED NOT UNDOED
 // TODO: ADD INDICATOR FOR THE BG COLOR WHEEL
 // TODO: ADD BUCKET FILL TOOL FEATURE
+// TODO: CANVAS BG DOES NOT GET SAVED OR LOADED
 
 export default function App() {
   const [tool, setTool] = useState("Brush");
