@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 export default function Modal({ open, onClose, result }) {
   useEffect(() => {
     if (!open) return;
@@ -14,31 +13,42 @@ export default function Modal({ open, onClose, result }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl p-6 max-w-lg w-full relative animate-zoomIn"
+        className="bg-gray-700 rounded-2xl shadow-2xl p-8 max-w-2xl w-full relative animate-zoomIn border-2 border-gray-500"
         style={{ animation: "zoomIn 0.25s cubic-bezier(.4,2,.6,1)" }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute top-2 right-2 text-2xl text-gray-400 hover:text-gray-700 transition"
+          className="absolute top-4 right-4 text-3xl text-gray-400 hover:text-gray-200 transition font-bold"
           onClick={onClose}
           aria-label="Close"
         >
           ×
         </button>
-        <h2 className="text-xl font-bold mb-4 text-center">AI Result</h2>
+        <h2 className="text-2xl font-mono font-bold text-gray-100 mb-6 text-center uppercase">
+          Results
+        </h2>
         {Array.isArray(result) ? (
-          <ul className="space-y-2">
+          <ul className="space-y-4">
             {result.map((item, i) => (
-              <li key={i} className="bg-gray-100 rounded p-3">
-                <div className="font-mono text-sm text-gray-700">
-                  <span className="font-semibold">Expression:</span> {item.expr}
+              <li
+                key={i}
+                className="bg-white rounded-xl p-5 shadow flex flex-col gap-2 border-l-4 border-gray-500"
+              >
+                <div className="font-mono text-lg text-gray-900 font-bold">
+                  <span className="text-gray-900 font-mono font-bold">
+                    Expression:
+                  </span>{" "}
+                  {item.expr}
                 </div>
-                <div className="font-mono text-sm text-gray-700">
-                  <span className="font-semibold">Result:</span> {item.result}
+                <div className="font-mono text-lg text-gray-900 font-bold">
+                  <span className="text-gray-900 font-mono font-bold">
+                    Result:
+                  </span>{" "}
+                  {item.result}
                 </div>
                 {item.assign && (
                   <div className="font-mono text-xs text-green-700 mt-1">
@@ -49,8 +59,18 @@ export default function Modal({ open, onClose, result }) {
             ))}
           </ul>
         ) : (
-          <div className="text-gray-700">{String(result)}</div>
+          <div className="text-gray-100 text-lg text-center py-8 font-mono font-bold">
+            {String(result)}
+          </div>
         )}
+        <div className="mt-8 flex justify-center">
+          <button
+            className="px-8 py-2 rounded bg-gray-900 text-white font-mono font-bold text-lg shadow hover:bg-gray-800 transition"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
       </div>
       <style>{`
         @keyframes zoomIn {
